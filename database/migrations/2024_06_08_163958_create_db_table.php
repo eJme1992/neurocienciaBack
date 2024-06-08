@@ -59,7 +59,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('answers');
+         Schema::dropIfExists('answers');
         Schema::dropIfExists('options');
         Schema::dropIfExists('questions');
         Schema::dropIfExists('surveys');
