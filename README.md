@@ -1,4 +1,4 @@
-Para que las etiquetas HTML se muestren correctamente en un archivo README de Git, puedes utilizar el formato de Markdown. Aquí está el contenido con las etiquetas HTML convertidas a Markdown:
+<h1>Prueba tecnica Edwin Jose Backend</h1>
 
 ```markdown
 # Instrucciones para ejecutar el proyecto Laravel
