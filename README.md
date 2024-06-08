@@ -1,4 +1,11 @@
-
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrucciones para ejecutar el proyecto Laravel</title>
+</head>
+<body>
     <h1>Instrucciones para ejecutar el proyecto Laravel</h1>
     
     <h2>Requisitos previos</h2>
@@ -91,4 +98,5 @@
     <footer>
         <p>Estas instrucciones te ayudarán a configurar y ejecutar el proyecto Laravel correctamente.</p>
     </footer>
-
+</body>
+</html>
