@@ -78,9 +78,17 @@ DB_PASSWORD=contraseña
 1. Abre una terminal en la carpeta raíz de tu proyecto Laravel.
 2. Ejecuta el siguiente comando para ejecutar el test unitario de conexión y asegurarte de que la configuración de la base de datos sea correcta:
 ```
-php artisan test tests/Unit/ExampleTest.php --filter test_database_connection
+php artisan test --filter testDatabaseConnection
 ```
 3. Si el test es exitoso, significa que la configuración de la base de datos es correcta.
+
+<code>string(3) "ddd"
+
+   PASS  Tests\Unit\ConnectionTest
+  ✓ database connection                                                                                                                    0.11s  
+
+  Tests:    1 passed (2 assertions)
+  Duration: 0.15s</code>
 
 Estas instrucciones te ayudarán a configurar y ejecutar el proyecto Laravel correctamente.
 ``` 
