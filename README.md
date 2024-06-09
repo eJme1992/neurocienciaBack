@@ -108,12 +108,3 @@ Para esto debera quitar las referencia a imagenes y convertir el json a string h
 
 Recuerda que eliminar la comas que marcaban las imagenes para que el json sea valiso 
 
-
-
-
-
-
-Se se hace alguna modificacion en en codigo para genera documentancion utilice 
-//  php artisan l5-swagger:generate 
-//  php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
-Luego de hacer los comentarios respectivo
