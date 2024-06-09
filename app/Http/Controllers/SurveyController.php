@@ -59,7 +59,7 @@ class SurveyController extends Controller
 
         if( empty($params_array) )
             $params_array = $request->getContent();
-
+       
         $validator = Validator::make($params_array, [
             'json'    => 'required',
         ]);
