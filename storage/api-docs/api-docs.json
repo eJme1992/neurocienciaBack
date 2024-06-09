@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Mi Api documentation Att Edwin Mogollon",
+        "title": "My Api documentation Att Edwin Mogollon",
         "version": "1.0.0"
     },
     "paths": {
@@ -113,6 +113,42 @@
                     },
                     "400": {
                         "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/begin": {
+            "post": {
+                "tags": [
+                    "Respuestas"
+                ],
+                "summary": "Registra una respuesta",
+                "description": "Este método registra una respuesta del usuario",
+                "operationId": "160f38f17729a45d91fc236aa139fa70",
+                "requestBody": {
+                    "description": "Datos necesarios para registrar una respuesta",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "description": "El correo electrónico del usuario",
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Respuesta registrada exitosamente"
+                    },
+                    "400": {
+                        "description": "Error al registrar la respuesta"
                     }
                 }
             }

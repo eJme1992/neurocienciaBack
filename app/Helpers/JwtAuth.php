@@ -3,7 +3,10 @@
 namespace App\Helpers;
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use App\Models\User;
+use App\Models\UserAnswer;
+use stdClass;
 
 class JwtAuth
 {
@@ -23,7 +26,7 @@ class JwtAuth
      * @param bool|null $getToken Whether to return token or user data
      * @return array Response data
      */
-    public function signup(string $email, string $password, ?bool $getToken = null): array
+    public function signup(string $email, string $password, ?bool $getToken = null): ?array
     {
         $user = User::where([
             'email'    => $email,
@@ -31,11 +34,8 @@ class JwtAuth
         ])->first();
 
         // Verify credentials
-        if (!$user instanceof User) {
-            return [
-                'status' => 'error',
-                'msj'    => 'Credentials not found'
-            ];
+        if (empty($user)) {
+            return null;
         }
 
         $this->user = $user;
@@ -51,6 +51,30 @@ class JwtAuth
         return $this->tokenGenerator($token, 'login', $getToken);
     }
 
+    public function signupAnswer(string $email, ?bool $getToken = null):?array
+    {
+        $user = UserAnswer::where([
+            'email'    => $email,
+        ])->first();
+
+        // Verify credentials
+        if (empty($user)) {
+            return null;
+        }
+
+        $this->user = $user;
+
+        // Generate token
+        $token = [
+                'sub'   => $user->id,
+                'email' => $user->email,
+                'iat'   => time(),
+                'exp'   => time() + (7 * 24 * 60 * 60),
+        ];
+
+        return $this->tokenGenerator($token, 'Answer', $getToken);
+    }
+
     /**
      * Generates JWT token.
      *
@@ -62,15 +86,13 @@ class JwtAuth
     private function tokenGenerator(array $token, string $type, ?bool $getToken = null): array
     {
         $jwt = JWT::encode($token, $this->key, 'HS256');
-        $decode = JWT::decode($jwt, $this->key,(object)['HS256']);
+        $decode = JWT::decode($jwt, new Key($this->key, 'HS256'));
 
         if (is_null($getToken)) {
             $data = [
-                'status' => 'success',
-                'data'   => $jwt,
+                'token'   => $jwt,
                 'user'   => $this->user,
                 'type'   => $type,
-                'msj'    => 'Login successful'
             ];
         }
         
@@ -89,7 +111,9 @@ class JwtAuth
         try {
             $jwt = str_replace('"', '', $jwt);
             $auth = false;
-            $decode = JWT::decode($jwt, $this->key,(object)['HS256']);
+            $algorithms = new stdClass();
+            $algorithms->algos = array('HS256');
+            $decode = JWT::decode($jwt, new Key($this->key, 'HS256'));
         } catch (\UnexpectedValueException $e) {
             $auth = false;
         } catch (\DomainException $e) {
@@ -116,6 +140,8 @@ class JwtAuth
      */
     public function jwtDecode(string $token)
     {
-        return JWT::decode($token, $this->key,(object)['HS256']);
+        $algorithms = new stdClass();
+        $algorithms->algos = array('HS256');
+        return JWT::decode($token, new Key($this->key, 'HS256'));
     }
 }

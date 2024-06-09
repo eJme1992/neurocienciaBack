@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\JwtAuth;
 use App\Models\User;
+use App\Models\UserAnswer;
 
 /**
  * @OA\Info(
@@ -89,18 +90,18 @@ class AuthController extends Controller
         $password = hash('sha256', $params_array['password']);
         $user = $this->jwtAuth->signup($params_array['email'], $password);
 
-        if ($user['status'] != 'success') {
+        if (empty($user)) {
             return $this->errorResponse(403, 'El usuario no se ha podido logear correctamente', 'Los datos no han sido encontrados');
         }
 
         $data = [
-            'status' => $user['status'],
+            'status' => 'success', 
             'code'   => 200,
-            'msj'    => $user['msj'],
+            'msj'    => 'El usuario se ha logeado correctamente',
             'data'   => $user,
         ];
 
-        return response()->json($data, $data['code']);
+        return response()->json($data, 200);
     }
 
     /**
@@ -166,6 +167,7 @@ class AuthController extends Controller
 
         $password = hash('sha256', $params_array['password']);
         $user = new User([
+            'name'       => $params_array['email'],
             'email'      => $params_array['email'],
             'password'   => $password,
         ]);
@@ -181,7 +183,76 @@ class AuthController extends Controller
         return response()->json($data, $data['code']);
     }
 
- 
+
+        /**
+     * @OA\Post(
+     *     path="/begin",
+     *     summary="Registra una respuesta",
+     *     description="Este método registra una respuesta del usuario",
+     *     tags={"Respuestas"},
+     *     @OA\RequestBody(
+     *         description="Datos necesarios para registrar una respuesta",
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="email",
+     *                 type="string",
+     *                 description="El correo electrónico del usuario",
+     *                 example="user@example.com"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Respuesta registrada exitosamente",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error al registrar la respuesta",
+     *     ),
+     * )
+     */
+    public function registerAnsawer(Request $request)
+    {
+        $params_array = $request->except('token');
+
+        if( empty($params_array) )
+            $params_array = $request->getContent();
+
+        $validator = Validator::make($params_array, [
+            'email'      => 'required|email',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorResponse(403, 'El usuario no ha sido creado', $validator->errors());
+        }
+
+        $user = UserAnswer::where('email', $params_array['email'])->first();
+
+        if(!empty($user)) {
+            return $this->loginUserAnswer($params_array['email']);
+        }
+
+        $user = new UserAnswer([
+            'email'      => $params_array['email'],
+        ]);
+
+        $user->save();
+
+        return $this->loginUserAnswer($params_array['email']);
+    }
+
+    private function loginUserAnswer(string $email){
+        $user = $this->jwtAuth->signupAnswer($email);
+        $data = [
+            'status' => 'success', 
+            'code'   => 200,
+            'msj'    => 'El usuario se ha logeado correctamente',
+            'data'   => $user,
+        ];
+        return response()->json($data, 200);
+    }
 
     protected function errorResponse($code, $message, $errors)
     {
