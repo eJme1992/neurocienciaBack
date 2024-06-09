@@ -7,6 +7,7 @@ use Firebase\JWT\Key;
 use App\Models\User;
 use App\Models\UserAnswer;
 use stdClass;
+use Illuminate\Support\Facades\Hash;
 
 class JwtAuth
 {
@@ -29,11 +30,11 @@ class JwtAuth
     public function signup(string $email, string $password, ?bool $getToken = null): ?array
     {
         $user = User::where([
-            'email'    => $email,
-            'password' => $password
+            'email'    => $email
         ])->first();
+ 
         // Verify credentials
-        if (empty($user)) {
+        if (!$user || !Hash::check($password, $user->password)) {
             return null;
         }
         $this->user = $user;
@@ -49,7 +50,7 @@ class JwtAuth
         return $this->tokenGenerator($token, 'login', $getToken);
     }
 
-    public function signupAnswer(string $email, ?bool $getToken = null):?array
+    public function signupAnswer(string $email,string $survey, ?bool $getToken = null):?array
     {
         $user = UserAnswer::where([
             'email'    => $email,
@@ -66,6 +67,7 @@ class JwtAuth
         $token = [
                 'sub'   => $user->id,
                 'email' => $user->email,
+                'survey' => $survey,
                 'type'  => 'Answer',
                 'iat'   => time(),
                 'exp'   => time() + (7 * 24 * 60 * 60),

@@ -20,6 +20,18 @@ class ApiAuthAnswerMiddleware
         // Get token from request header
         $token = $request->header('Authorization');
         // Validate token
+        if (!$token) {
+            $token = $request->header('Authorization_');
+            if (!$token){
+                // Return error response if token is not provided
+                $data = [
+                    'status' => 'error',
+                    'code'   =>  403,
+                    'msj'    => 'El token es invalido',
+                ];
+                return response()->json($data, $data['code']);
+            }
+        }
        
         $jwtAuth = new JwtAuth();
    
@@ -34,6 +46,7 @@ class ApiAuthAnswerMiddleware
             ];
             return response()->json($data, $data['code']);
         } 
+        $request->headers->set('user',$jwtAuth->checkToken($token,true));
         return $next($request);
     }
 }

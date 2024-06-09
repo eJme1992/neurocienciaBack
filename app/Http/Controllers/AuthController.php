@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\JwtAuth;
+use App\Models\Survey;
 use App\Models\User;
 use App\Models\UserAnswer;
 
@@ -31,7 +32,7 @@ class AuthController extends Controller
      *     path="/login",
      *     tags={"auth"},
      *     summary="Log in a user",
-     *     description="This can only be done by the logged in user.",
+     *     description="Loguea un usuario admin.",
      *     operationId="loginUser",
      *     @OA\RequestBody(
      *         description="User log in",
@@ -47,7 +48,7 @@ class AuthController extends Controller
      *                     property="password",
      *                     type="string"
      *                 ),
-     *                 example={"email": "ser@prueba.com", "password": "password"}
+     *                 example={"email": "user@prueba.com", "password": "password"}
      *             )
      *         )
      *     ),
@@ -89,11 +90,9 @@ class AuthController extends Controller
 
         $password = hash('sha256', $params_array['password']);
         $user = $this->jwtAuth->signup($params_array['email'], $password);
-
         if (empty($user)) {
             return $this->errorResponse(403, 'El usuario no se ha podido logear correctamente', 'Los datos no han sido encontrados');
         }
-
         $data = [
             'status' => 'success', 
             'code'   => 200,
@@ -109,7 +108,7 @@ class AuthController extends Controller
      *     path="/register",
      *     tags={"auth"},
      *     summary="Register a new user",
-     *     description="This can only be done by the logged out user.",
+     *     description="Registra un usuario Admin.",
      *     operationId="registerUser",
      *     @OA\RequestBody(
      *         description="User registration",
@@ -187,19 +186,25 @@ class AuthController extends Controller
         /**
      * @OA\Post(
      *     path="/begin",
-     *     summary="Registra una respuesta",
-     *     description="Este método registra una respuesta del usuario",
-     *     tags={"Respuestas"},
-     *     @OA\RequestBody(
-     *         description="Datos necesarios para registrar una respuesta",
+     *     summary="Legea o registra un usuario",
+     *     description="Atravez de la primera respuesta la cual es el correo electronico se logea o registra un usuario devuelve el token de seguridad para el resto de la encuesta",
+     *     tags={"auth"},
+     *    @OA\RequestBody(
+     *         description="Cliente login",
      *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(
-     *                 property="email",
-     *                 type="string",
-     *                 description="El correo electrónico del usuario",
-     *                 example="user@example.com"
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="survey",
+     *                     type="string",
+     *                     description="Nombre de la encuesta"
+     *                 ),
+     *                 example={"email": "user@prueba.com", "survey": "Encuesta de prueba"}
      *             )
      *         )
      *     ),
@@ -222,16 +227,23 @@ class AuthController extends Controller
 
         $validator = Validator::make($params_array, [
             'email'      => 'required|email',
+            'survey'     => 'required'
         ]);
 
         if ($validator->fails()) {
             return $this->errorResponse(403, 'El usuario no ha sido creado', $validator->errors());
         }
 
+        $survey = Survey::where('title', $params_array['survey'])->first();
+
+        if(empty($survey)) {
+            return $this->errorResponse(403, 'La encuesta no ha sido encontrada', 'La encuesta no ha sido encontrada');
+        }
+
         $user = UserAnswer::where('email', $params_array['email'])->first();
 
         if(!empty($user)) {
-            return $this->loginUserAnswer($params_array['email']);
+            return $this->loginUserAnswer($params_array['email'], $params_array['survey']);
         }
 
         $user = new UserAnswer([
@@ -240,11 +252,11 @@ class AuthController extends Controller
 
         $user->save();
 
-        return $this->loginUserAnswer($params_array['email']);
+        return $this->loginUserAnswer($params_array['email'], $params_array['survey']);
     }
 
-    private function loginUserAnswer(string $email){
-        $user = $this->jwtAuth->signupAnswer($email);
+    private function loginUserAnswer(string $email, string $survey){
+        $user = $this->jwtAuth->signupAnswer($email, $survey);
         $data = [
             'status' => 'success', 
             'code'   => 200,
@@ -262,7 +274,6 @@ class AuthController extends Controller
             'msj'    => $message,
             'errors' => $errors,
         ];
-
         return response()->json($data, $code);
     }
 }

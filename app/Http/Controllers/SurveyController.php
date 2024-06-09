@@ -8,29 +8,19 @@ use App\Models\Question;
 use App\Models\Option;
 use Illuminate\Support\Facades\Validator;
 
-/**
- * @OA\SecurityScheme(
- *     type="http",
- *     scheme="bearer",
- *     bearerFormat="JWT",
- *     securityScheme="bearerAuth",
- * )
- */
-
-
 class SurveyController extends Controller
 {
 
-     /**
+    
+    /**
      * @OA\Post(
      *     path="/importFromJson",
-     *     tags={"survey"},
-     *     summary="Import data from JSON",
-     *     description="This can only be done by the logged in user.",
+     *     tags={"Administrador de encuestas"},
+     *     summary="Import data from JSON - IMPORTA ENCUESTA DESDE JSON",
+     *     description="Para importar el contenido de una encuesta desde un JSON convertido a string, para ello debe antes eliminar las referencia a imágenes, además debe está logueado como administrador",
      *     operationId="importFromJson",
-     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
-     *         name="Authorization",
+     *         name="Authorization_",
      *         in="header",
      *         required=true,
      *         @OA\Schema(
@@ -46,9 +36,9 @@ class SurveyController extends Controller
      *             @OA\Schema(
      *                 @OA\Property(
      *                     property="json",
-     *                     type="string"
+     *                     type="string",
+     *                     example="{""title"":""Encuesta de prueba"",""description"":""Encuesta de prueba"",""pages"":[{""name"":""page1"",""elements"":[{""type"":""dropdown"",""name"":""question1"",""title"":""¿Cuál es tu color favorito?"",""choices"":[{""value"":""Rojo"",""text"":""Rojo""},{""value"":""Azul"",""text"":""Azul""},{""value"":""Verde"",""text"":""Verde""}]},{""type"":""text"",""name"":""question2"",""title"":""¿Cuál es tu correo electrónico?"",""inputType"":""email""},{""type"":""imagepicker"",""name"":""question3"",""title"":""¿Cuál es tu animal favorito?"",""choices"":[{""value"":""Perro"",""text"":""Perro""},{""value"":""Gato"",""text"":""Gato""},{""value"":""Pájaro"",""text"":""Pájaro""}]}]}]}",
      *                 ),
-     *                 example={"json": "your JSON data here"}
      *             )
      *         )
      *     ),
@@ -81,6 +71,11 @@ class SurveyController extends Controller
         // Decodificar JSON
         $surveyData = json_decode($params_array['json'], true);
         
+        $survey = Survey::where('title',$surveyData['title'])->first();
+        if ($survey) {
+            return response()->json(['message' => 'La encuesta ya existe'], 403);
+        }
+
         // Crear la encuesta
         $survey = Survey::create([
             'title' => $surveyData['title'],
@@ -89,13 +84,15 @@ class SurveyController extends Controller
 
         // Procesar cada página del JSON
         foreach ($surveyData['pages'] as $page) {
+            $namepage = $page['name'];
             foreach ($page['elements'] as $element) {
                 if ($element['type'] === 'dropdown') {
                     // Crear pregunta de opción única
                     $question = Question::create([
                         'survey_id' => $survey->id,
                         'text' => $element['title'],
-                        'type' => 'single_option'
+                        'type' => 'single_option',
+                        'page' => $namepage
                     ]);
 
                     // Insertar opciones de la pregunta

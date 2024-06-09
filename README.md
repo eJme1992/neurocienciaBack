@@ -98,7 +98,13 @@ Para entra en la domentacion del proyecton debe ejecutar los siguientes comando 
 php artisan serve // Para ejecutar el proyecto
 
 
+El sistema tiene la posibilidad de importar los datos de Json a la base de datos con el metodo 
 
+Para esto debera quitar las referencia a imagenes y convertir el json a string Ejmeplo 
+
+{
+  "json": ""
+}
 
 
 

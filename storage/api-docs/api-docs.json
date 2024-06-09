@@ -11,7 +11,7 @@
                     "auth"
                 ],
                 "summary": "Log in a user",
-                "description": "This can only be done by the logged in user.",
+                "description": "Loguea un usuario admin.",
                 "operationId": "loginUser",
                 "requestBody": {
                     "description": "User log in",
@@ -29,7 +29,7 @@
                                 },
                                 "type": "object",
                                 "example": {
-                                    "email": "ser@prueba.com",
+                                    "email": "user@prueba.com",
                                     "password": "password"
                                 }
                             }
@@ -67,7 +67,7 @@
                     "auth"
                 ],
                 "summary": "Register a new user",
-                "description": "This can only be done by the logged out user.",
+                "description": "Registra un usuario Admin.",
                 "operationId": "registerUser",
                 "requestBody": {
                     "description": "User registration",
@@ -120,25 +120,31 @@
         "/begin": {
             "post": {
                 "tags": [
-                    "Respuestas"
+                    "auth"
                 ],
-                "summary": "Registra una respuesta",
-                "description": "Este método registra una respuesta del usuario",
+                "summary": "Legea o registra un usuario",
+                "description": "Atravez de la primera respuesta la cual es el correo electronico se logea o registra un usuario devuelve el token de seguridad para el resto de la encuesta",
                 "operationId": "160f38f17729a45d91fc236aa139fa70",
                 "requestBody": {
-                    "description": "Datos necesarios para registrar una respuesta",
+                    "description": "Cliente login",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
                                     "email": {
-                                        "description": "El correo electrónico del usuario",
-                                        "type": "string",
-                                        "example": "user@example.com"
+                                        "type": "string"
+                                    },
+                                    "survey": {
+                                        "description": "Nombre de la encuesta",
+                                        "type": "string"
                                     }
                                 },
-                                "type": "object"
+                                "type": "object",
+                                "example": {
+                                    "email": "user@prueba.com",
+                                    "survey": "Encuesta de prueba"
+                                }
                             }
                         }
                     }
@@ -156,14 +162,14 @@
         "/importFromJson": {
             "post": {
                 "tags": [
-                    "survey"
+                    "Administrador de encuestas"
                 ],
-                "summary": "Import data from JSON",
-                "description": "This can only be done by the logged in user.",
+                "summary": "Import data from JSON - IMPORTA ENCUESTA DESDE JSON",
+                "description": "Para importar el contenido de una encuesta desde un JSON convertido a string, para ello debe antes eliminar las referencia a imágenes, además debe está logueado como administrador",
                 "operationId": "importFromJson",
                 "parameters": [
                     {
-                        "name": "Authorization",
+                        "name": "Authorization_",
                         "in": "header",
                         "description": "Bearer token for authorization",
                         "required": true,
@@ -180,13 +186,11 @@
                             "schema": {
                                 "properties": {
                                     "json": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "{\"title\":\"Encuesta de prueba\",\"description\":\"Encuesta de prueba\",\"pages\":[{\"name\":\"page1\",\"elements\":[{\"type\":\"dropdown\",\"name\":\"question1\",\"title\":\"¿Cuál es tu color favorito?\",\"choices\":[{\"value\":\"Rojo\",\"text\":\"Rojo\"},{\"value\":\"Azul\",\"text\":\"Azul\"},{\"value\":\"Verde\",\"text\":\"Verde\"}]},{\"type\":\"text\",\"name\":\"question2\",\"title\":\"¿Cuál es tu correo electrónico?\",\"inputType\":\"email\"},{\"type\":\"imagepicker\",\"name\":\"question3\",\"title\":\"¿Cuál es tu animal favorito?\",\"choices\":[{\"value\":\"Perro\",\"text\":\"Perro\"},{\"value\":\"Gato\",\"text\":\"Gato\"},{\"value\":\"Pájaro\",\"text\":\"Pájaro\"}]}]}]}"
                                     }
                                 },
-                                "type": "object",
-                                "example": {
-                                    "json": "your JSON data here"
-                                }
+                                "type": "object"
                             }
                         }
                     }
@@ -198,21 +202,7 @@
                     "400": {
                         "description": "Invalid JSON data supplied"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        }
-    },
-    "components": {
-        "securitySchemes": {
-            "bearerAuth": {
-                "type": "http",
-                "bearerFormat": "JWT",
-                "scheme": "bearer"
+                }
             }
         }
     }
