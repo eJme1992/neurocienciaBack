@@ -22,6 +22,9 @@ class AuthController extends Controller
 
     public function __construct(JwtAuth $jwtAuth)
     {
+        header("Access-Control-Allow-Origin: https://example.com");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE, PUT");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization");
         $this->jwtAuth = $jwtAuth;
     }
 

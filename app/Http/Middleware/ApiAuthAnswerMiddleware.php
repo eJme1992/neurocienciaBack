@@ -16,7 +16,7 @@ class ApiAuthAnswerMiddleware
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
-    {
+    { 
         // Get token from request header
         $token = $request->header('Authorization');
         // Validate token
