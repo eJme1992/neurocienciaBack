@@ -54,97 +54,100 @@ class SurveyController extends Controller
      */
     public function importFromJson(Request $request)
     {
+        try{
+            $params_array = $request->except('token');
 
-        $params_array = $request->except('token');
+            if( empty($params_array) )
+                $params_array = $request->getContent();
+        
+            $validator = Validator::make($params_array, [
+                'json'    => 'required',
+            ]);
 
-        if( empty($params_array) )
-            $params_array = $request->getContent();
-       
-        $validator = Validator::make($params_array, [
-            'json'    => 'required',
-        ]);
+            if ($validator->fails()) {
+                return response()->json(['message' => 'Datos JSON inválidos'], 403);
+            }
+        
+            $surveyData = json_decode($params_array['json'], true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json(['message' => 'Datos JSON inválidos'.json_last_error_msg()], 403);
+            }
+            $survey = Survey::where('title',$surveyData['title'])->first();
+            if ($survey) {
+                return response()->json(['message' => 'La encuesta ya existe'], 403);
+            }
 
-        if ($validator->fails()) {
-            return response()->json(['message' => 'Datos JSON inválidos'], 403);
-        }
-      
-        $surveyData = json_decode($params_array['json'], true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            return response()->json(['message' => 'Datos JSON inválidos'.json_last_error_msg()], 403);
-        }
-        $survey = Survey::where('title',$surveyData['title'])->first();
-        if ($survey) {
-            return response()->json(['message' => 'La encuesta ya existe'], 403);
-        }
+            // Crear la encuesta
+            $survey = Survey::create([
+                'title' => $surveyData['title'],
+                'description' => $surveyData['description']
+            ]);
 
-        // Crear la encuesta
-        $survey = Survey::create([
-            'title' => $surveyData['title'],
-            'description' => $surveyData['description']
-        ]);
-
-        // Procesar cada página del JSON
-        foreach ($surveyData['pages'] as $page) {
-            $namepage = $page['name'];
-            foreach ($page['elements'] as $element) {
-                if ($element['type'] === 'dropdown') {
-                    // Crear pregunta de opción única
-                    $question = Question::create([
-                        'survey_id' => $survey->id,
-                        'text' => $element['title'],
-                        'name' => $element['name'],
-                        'type' => 'single_option',
-                        'page' => $namepage
-                    ]);
-
-                    // Insertar opciones de la pregunta
-                    foreach ($element['choices'] as $choice) {
-                        Option::create([
-                            'question_id' => $question->id,
-                            'text' => $choice['text'],
-                            'page' => $namepage,
+            // Procesar cada página del JSON
+            foreach ($surveyData['pages'] as $page) {
+                $namepage = $page['name'];
+                foreach ($page['elements'] as $element) {
+                    if ($element['type'] === 'dropdown') {
+                        // Crear pregunta de opción única
+                        $question = Question::create([
+                            'survey_id' => $survey->id,
+                            'text' => $element['title'],
                             'name' => $element['name'],
+                            'type' => 'single_option',
+                            'page' => $namepage
                         ]);
-                    }
-                } elseif ($element['type'] === 'text' && $element['inputType'] === 'email') {
-                    // Crear pregunta de texto
-                    Question::create([
-                        'survey_id' => $survey->id,
-                        'text' => $element['title'],
-                        'type' => 'text',
-                        'name' => $element['name'],
-                        'page' => $namepage
-                    ]);
-                } elseif ($element['type'] === 'imagepicker') {
-                    // Crear pregunta de opción múltiple (imágenes)
-                    $question = Question::create([
-                        'survey_id' => $survey->id,
-                        'text' => $element['title'],
-                        'name' => $element['name'],
-                        'type' => 'multiple_option',
-                        'page' => $namepage
-                    ]);
 
-                    // Insertar opciones de la pregunta
-                    foreach ($element['choices'] as $choice) {
-                        Option::create([
-                            'question_id' => $question->id,
-                            'text' => $choice['value']
+                        // Insertar opciones de la pregunta
+                        foreach ($element['choices'] as $choice) {
+                            Option::create([
+                                'question_id' => $question->id,
+                                'text' => $choice['text'],
+                                'page' => $namepage,
+                                'name' => $element['name'],
+                            ]);
+                        }
+                    } elseif ($element['type'] === 'text' && $element['inputType'] === 'email') {
+                        // Crear pregunta de texto
+                        Question::create([
+                            'survey_id' => $survey->id,
+                            'text' => $element['title'],
+                            'type' => 'text',
+                            'name' => $element['name'],
+                            'page' => $namepage
+                        ]);
+                    } elseif ($element['type'] === 'imagepicker') {
+                        // Crear pregunta de opción múltiple (imágenes)
+                        $question = Question::create([
+                            'survey_id' => $survey->id,
+                            'text' => $element['title'],
+                            'name' => $element['name'],
+                            'type' => 'multiple_option',
+                            'page' => $namepage
+                        ]);
+
+                        // Insertar opciones de la pregunta
+                        foreach ($element['choices'] as $choice) {
+                            Option::create([
+                                'question_id' => $question->id,
+                                'text' => $choice['value']
+                            ]);
+                        }
+                    } elseif ($element['type'] === 'text' && $element['inputType'] === 'datetime-local') {
+                        // Crear pregunta de fecha de nacimiento
+                        Question::create([
+                            'survey_id' => $survey->id,
+                            'text' => $element['title'],
+                            'type' => 'date_of_birth',
+                            'name' => $element['name'],
+                            'page' => $namepage
                         ]);
                     }
-                } elseif ($element['type'] === 'text' && $element['inputType'] === 'datetime-local') {
-                    // Crear pregunta de fecha de nacimiento
-                    Question::create([
-                        'survey_id' => $survey->id,
-                        'text' => $element['title'],
-                        'type' => 'date_of_birth',
-                        'name' => $element['name'],
-                        'page' => $namepage
-                    ]);
                 }
             }
-        }
 
-        return response()->json(['message' => 'Encuesta importada exitosamente']);
+            return response()->json(['message' => 'Encuesta importada exitosamente']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error en el formato de Json'], 403);
+        }
     }
 }

@@ -4,16 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Answer;
 use App\Models\Question;
-use Illuminate\Support\Facades\Validator;
-
-use Illuminate\Http\Request;
 use App\Models\Survey;
 use App\Models\UserAnswer;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AnswerController extends Controller
 {
-
-     /**
+    /**
      * @OA\Post(
      *     path="/timeStore",
      *     summary="Almacena el tiempo por pagina de un cliente",
@@ -28,7 +26,7 @@ class AnswerController extends Controller
      *         ),
      *         description="Bearer token for authorization"
      *     ),
-     *    @OA\RequestBody(
+     *     @OA\RequestBody(
      *         description="Cliente login",
      *         required=true,
      *         @OA\MediaType(
@@ -39,8 +37,8 @@ class AnswerController extends Controller
      *                     type="string"
      *                 ),
      *                 @OA\Property(
-     *                     property="survey",
-     *                     type="string",
+     *                     property="time",
+     *                     type="string"
      *                 ),
      *                 example={"time": "234", "page": "page1"}
      *             )
@@ -51,7 +49,7 @@ class AnswerController extends Controller
      *         description="Operación exitosa",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Hora almacenada correctamente"),
+     *             @OA\Property(property="message", type="string", example="Hora almacenada correctamente")
      *         )
      *     ),
      *     @OA\Response(
@@ -59,46 +57,49 @@ class AnswerController extends Controller
      *         description="Error en la solicitud",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Error al almacenar la hora"),
+     *             @OA\Property(property="message", type="string", example="Error al almacenar la hora")
      *         )
-     *     ),
+     *     )
      * )
      */
-    public function TimeStore(Request $request)
+    public function timeStore(Request $request)
     {
-        $params_array = $request->except('token');
+        try {
+            $params_array = $request->all();
 
-        if( empty($params_array) )
-            $params_array = $request->getContent();
+            $validator = Validator::make($params_array, [
+                'page' => 'required|string',
+                'time' => 'required|integer'
+            ]);
 
-        $validator = Validator::make($params_array, [
-            'page'       => 'required',
-            'time'     => 'required'
-        ]);
-        if ($validator->fails()) {
-            return json_encode(['message' => 'No se han llenado los datos correctamente'], 403);
+            if ($validator->fails()) {
+                return response()->json(['message' => 'No se han llenado los datos correctamente'], 403);
+            }
+
+            $clientToken = json_decode($request->header('client'));
+            $client = UserAnswer::where('email', $clientToken->email)->first();
+            $survey = Survey::where('title', $clientToken->survey)->first();
+            $question = $survey->questions()->where('page', $params_array['page'])->first();
+
+            if (!$client || !$survey || !$question) {
+                return response()->json(['message' => 'No se han encontrado los datos'], 403);
+            }
+
+            // Registra el tiempo
+            Answer::create([
+                'question_id' => $question->id,
+                'survey_id' => $survey->id,
+                'user_id' => $client->id,
+                'time_spent' => $params_array['time']
+            ]);
+
+            return response()->json(['message' => 'Hora almacenada correctamente'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage() . $e->getLine()], 403);
         }
-        $clientToken = json_decode($request->header('client'));
-        $client = UserAnswer::where('email', $clientToken->email)->first();
-        $survey = Survey::where('title', $clientToken->survey)->first();
-        $question = $survey->questions()->where('page', $params_array['page'])->first();
-
-        if( !$client || !$survey || !$question )
-            return json_encode(['message' => 'No se han encontrado los datos'], 403);
-        
-        // Registra el tiempo
-        Answer::create([
-            'question_id' => $question->id,
-            'survey_id'   => $survey->id,
-            'user_id'     => $client->id,
-            'time_spent'  => $params_array['time']
-        ]);
-
-        return json_encode(['message' => 'Hora almacenada correctamente'], 200);
     }
 
-
-     /**
+    /**
      * @OA\Post(
      *     path="/registerAnswer",
      *     tags={"Respuestas"},
@@ -123,14 +124,14 @@ class AnswerController extends Controller
      *                 @OA\Property(
      *                     property="json",
      *                     type="string",
-     *                     example="{""question1"":""edwin@gmail.com"",""question2"":""Item 1"",""question3"":""2024-06-21T15:39"",""question4"":""Image 2""}",
-     *                 ),
+     *                     example="{\"question1\":\"edwin@gmail.com\",\"question2\":\"Item 1\",\"question3\":\"2024-06-21T15:39\",\"question4\":\"Image 2\"}"
+     *                 )
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Respuesta almacenada correctamente",
+     *         description="Respuesta almacenada correctamente"
      *     ),
      *     @OA\Response(
      *         response=400,
@@ -138,56 +139,66 @@ class AnswerController extends Controller
      *     )
      * )
      */
-    public function AnwersUpdate(Request $request)
+    public function answersUpdate(Request $request)
     {
-        $params_array = $request->except('token');
+        try {
+            $params_array = $request->all();
 
-        if( empty($params_array) )
-            $params_array = $request->getContent();
+            $validator = Validator::make($params_array, [
+                'json' => 'required'
+            ]);
 
-        $validator = Validator::make($params_array, [
-            'json'    => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => 'Datos JSON inválidos'], 403);
-        }
-      
-        $date = json_decode($params_array['json'], true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            return response()->json(['message' => 'Datos JSON inválidos'.json_last_error_msg()], 403);
-        }
-       /*
-             array:4 [ // app/Http/Controllers/AnswerController.php:160
-            "question1" => "edwin@gmail.com"
-            "question2" => "Item 1"
-            "question3" => "2024-06-21T15:39"
-            "question4" => "Image 2"
-            ]
-       */
-
-        $clientToken = json_decode($request->header('client'));
-        $client = UserAnswer::where('email', $clientToken->email)->first();
-        $survey = Survey::where('title', $clientToken->survey)->first();
-        dd($clientToken->survey);
-        foreach ($date as $key => $value) {
-            $questions = Question::where('name', $key)->where('survey_id', '=',$survey->id)->first();
-            // Registra la respuesta
-            if($questions->type !== 'dropdown'){
-            Answer::where('question_id', $questions->id)
-                ->where('survey_id', $survey->id)
-                ->where('user_id', $client->id)
-                ->update(['answer' => $value]);
+            if ($validator->fails()) {
+                return response()->json(['message' => 'Datos JSON inválidos'], 403);
             }
-            if($questions->type == 'dropdown'){
-                $option = $questions->options()->where('text', $value)->first();
-                Answer::where('question_id', $questions->id)
-                    ->where('survey_id', $survey->id)
-                    ->where('user_id', $client->id)
-                    ->update(['option_id' => $option->id]);
+
+            $data = json_decode($params_array['json'], true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json(['message' => 'Datos JSON inválidos: ' . json_last_error_msg()], 403);
             }
+
+            $clientToken = json_decode($request->header('client'));
+            $client = UserAnswer::where('email', $clientToken->email)->first();
+            $survey = Survey::where('title', $clientToken->survey)->first();
+
+            if (!$client || !$survey) {
+                return response()->json(['message' => 'No se han encontrado los datos'], 403);
+            }
+
+            foreach ($data as $key => $value) {
+                $question = Question::where('name', $key)->where('survey_id', $survey->id)->first();
+
+                if (!$question) {
+                    return response()->json(['message' => 'Pregunta no encontrada: ' . $key], 403);
+                }
+
+                if ($question->type !== 'dropdown') {
+                    Answer::updateOrCreate(
+                        [
+                            'question_id' => $question->id,
+                            'survey_id' => $survey->id,
+                            'user_id' => $client->id
+                        ],
+                        ['answer' => $value]
+                    );
+                } else {
+                    $option = $question->options()->where('text', $value)->first();
+                    if ($option) {
+                        Answer::updateOrCreate(
+                            [
+                                'question_id' => $question->id,
+                                'survey_id' => $survey->id,
+                                'user_id' => $client->id
+                            ],
+                            ['option_id' => $option->id]
+                        );
+                    }
+                }
+            }
+
+            return response()->json(['message' => 'Respuesta almacenada correctamente'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage() . $e->getLine()], 403);
         }
-        
-        return json_encode(['message' => 'Respuesta almacenada correctamente'], 200);
     }
 }

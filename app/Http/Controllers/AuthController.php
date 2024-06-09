@@ -16,7 +16,6 @@ use App\Models\UserAnswer;
  * )
  */
 
-
 class AuthController extends Controller
 {
     protected $jwtAuth;
@@ -26,7 +25,6 @@ class AuthController extends Controller
         $this->jwtAuth = $jwtAuth;
     }
 
-  
     /**
      * @OA\Post(
      *     path="/login",
@@ -74,33 +72,36 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $params_array = $request->except('token');
+        try {
+            $params_array = $request->all();
 
-        if( empty($params_array) )
-            $params_array = $request->getContent();
+            $validator = Validator::make($params_array, [
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
 
-        $validator = Validator::make($params_array, [
-            'email'    => 'required',
-            'password' => 'required',
-        ]);
+            if ($validator->fails()) {
+                return $this->errorResponse(403, 'El usuario no se ha podido logear correctamente', $validator->errors());
+            }
 
-        if ($validator->fails()) {
-            return $this->errorResponse(403, 'El usuario no se ha podido logear correctamente', $validator->errors());
+            $password = hash('sha256', $params_array['password']);
+            $user = $this->jwtAuth->signup($params_array['email'], $password);
+
+            if (empty($user)) {
+                return $this->errorResponse(403, 'El usuario no se ha podido logear correctamente', 'Los datos no han sido encontrados');
+            }
+
+            $data = [
+                'status' => 'success',
+                'code' => 200,
+                'msj' => 'El usuario se ha logeado correctamente',
+                'data' => $user,
+            ];
+
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage() . $e->getLine()], 403);
         }
-
-        $password = hash('sha256', $params_array['password']);
-        $user = $this->jwtAuth->signup($params_array['email'], $password);
-        if (empty($user)) {
-            return $this->errorResponse(403, 'El usuario no se ha podido logear correctamente', 'Los datos no han sido encontrados');
-        }
-        $data = [
-            'status' => 'success', 
-            'code'   => 200,
-            'msj'    => 'El usuario se ha logeado correctamente',
-            'data'   => $user,
-        ];
-
-        return response()->json($data, 200);
     }
 
     /**
@@ -150,47 +151,47 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $params_array = $request->except('token');
+        try {
+            $params_array = $request->all();
 
-        if( empty($params_array) )
-            $params_array = $request->getContent();
+            $validator = Validator::make($params_array, [
+                'email' => 'required|email|unique:users',
+                'password' => 'required',
+            ]);
 
-        $validator = Validator::make($params_array, [
-            'email'      => 'required|email|unique:users',
-            'password'   => 'required',
-        ]);
+            if ($validator->fails()) {
+                return $this->errorResponse(403, 'El usuario no ha sido creado', $validator->errors());
+            }
 
-        if ($validator->fails()) {
-            return $this->errorResponse(403, 'El usuario no ha sido creado', $validator->errors());
+            $password = hash('sha256', $params_array['password']);
+            $user = new User([
+                'name' => $params_array['email'],
+                'email' => $params_array['email'],
+                'password' => $password,
+            ]);
+
+            $user->save();
+
+            $data = [
+                'status' => 'success',
+                'code' => 200,
+                'msj' => 'El usuario ha sido creado',
+            ];
+
+            return response()->json($data, $data['code']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage() . $e->getLine()], 403);
         }
-
-        $password = hash('sha256', $params_array['password']);
-        $user = new User([
-            'name'       => $params_array['email'],
-            'email'      => $params_array['email'],
-            'password'   => $password,
-        ]);
-
-        $user->save();
-
-        $data = [
-            'status' => 'success',
-            'code'   => 200,
-            'msj'    => 'El usuario ha sido creado',
-        ];
-
-        return response()->json($data, $data['code']);
     }
 
-
-        /**
+    /**
      * @OA\Post(
      *     path="/begin",
-     *     summary="Legea o registra un usuario",
-     *     description="Atravez de la primera respuesta la cual es el correo electronico se logea o registra un usuario devuelve el token de seguridad para el resto de la encuesta",
+     *     summary="Log in or register a user",
+     *     description="Logs in or registers a user based on the provided email, and returns a token for the rest of the survey.",
      *     tags={"auth"},
-     *    @OA\RequestBody(
-     *         description="Cliente login",
+     *     @OA\RequestBody(
+     *         description="Client login",
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -210,59 +211,61 @@ class AuthController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Respuesta registrada exitosamente",
+     *         description="Respuesta registrada exitosamente"
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Error al registrar la respuesta",
-     *     ),
+     *         description="Error al registrar la respuesta"
+     *     )
      * )
      */
-    public function registerAnsawer(Request $request)
+    public function registerAnswer(Request $request)
     {
-        $params_array = $request->except('token');
+        try {
+            $params_array = $request->all();
 
-        if( empty($params_array) )
-            $params_array = $request->getContent();
+            $validator = Validator::make($params_array, [
+                'email' => 'required|email',
+                'survey' => 'required'
+            ]);
 
-        $validator = Validator::make($params_array, [
-            'email'      => 'required|email',
-            'survey'     => 'required'
-        ]);
+            if ($validator->fails()) {
+                return $this->errorResponse(403, 'El usuario no ha sido creado', $validator->errors());
+            }
 
-        if ($validator->fails()) {
-            return $this->errorResponse(403, 'El usuario no ha sido creado', $validator->errors());
-        }
+            $survey = Survey::where('title', $params_array['survey'])->first();
 
-        $survey = Survey::where('title', $params_array['survey'])->first();
+            if (empty($survey)) {
+                return $this->errorResponse(403, 'La encuesta no ha sido encontrada', 'La encuesta no ha sido encontrada');
+            }
 
-        if(empty($survey)) {
-            return $this->errorResponse(403, 'La encuesta no ha sido encontrada', 'La encuesta no ha sido encontrada');
-        }
+            $user = UserAnswer::where('email', $params_array['email'])->first();
 
-        $user = UserAnswer::where('email', $params_array['email'])->first();
+            if (!empty($user)) {
+                return $this->loginUserAnswer($params_array['email'], $params_array['survey']);
+            }
 
-        if(!empty($user)) {
+            $user = new UserAnswer([
+                'email' => $params_array['email'],
+                'name' => $params_array['email'],
+            ]);
+
+            $user->save();
+
             return $this->loginUserAnswer($params_array['email'], $params_array['survey']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage() . $e->getLine()], 403);
         }
-
-        $user = new UserAnswer([
-            'email'      => $params_array['email'],
-            'name'       => $params_array['email'],
-        ]);
-
-        $user->save();
-
-        return $this->loginUserAnswer($params_array['email'], $params_array['survey']);
     }
 
-    private function loginUserAnswer(string $email, string $survey){
+    private function loginUserAnswer(string $email, string $survey)
+    {
         $user = $this->jwtAuth->signupAnswer($email, $survey);
         $data = [
-            'status' => 'success', 
-            'code'   => 200,
-            'msj'    => 'El usuario se ha logeado correctamente',
-            'data'   => $user,
+            'status' => 'success',
+            'code' => 200,
+            'msj' => 'El usuario se ha logeado correctamente',
+            'data' => $user,
         ];
         return response()->json($data, 200);
     }
@@ -271,8 +274,8 @@ class AuthController extends Controller
     {
         $data = [
             'status' => 'error',
-            'code'   => $code,
-            'msj'    => $message,
+            'code' => $code,
+            'msj' => $message,
             'errors' => $errors,
         ];
         return response()->json($data, $code);
