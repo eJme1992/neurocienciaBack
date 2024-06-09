@@ -41,7 +41,7 @@
                                 "type": "object",
                                 "example": {
                                     "time": "234",
-                                    "page": "1"
+                                    "page": "page1"
                                 }
                             }
                         }

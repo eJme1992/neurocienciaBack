@@ -101,7 +101,8 @@ class SurveyController extends Controller
                     foreach ($element['choices'] as $choice) {
                         Option::create([
                             'question_id' => $question->id,
-                            'text' => $choice['text']
+                            'text' => $choice['text'],
+                            'page' => $namepage
                         ]);
                     }
                 } elseif ($element['type'] === 'text' && $element['inputType'] === 'email') {
@@ -109,7 +110,8 @@ class SurveyController extends Controller
                     Question::create([
                         'survey_id' => $survey->id,
                         'text' => $element['title'],
-                        'type' => 'text'
+                        'type' => 'text',
+                        'page' => $namepage
                     ]);
                 } elseif ($element['type'] === 'imagepicker') {
                     // Crear pregunta de opción múltiple (imágenes)
@@ -117,7 +119,8 @@ class SurveyController extends Controller
                         'survey_id' => $survey->id,
                         'text' => $element['title'],
                         'name' => $element['name'],
-                        'type' => 'multiple_option'
+                        'type' => 'multiple_option',
+                        'page' => $namepage
                     ]);
 
                     // Insertar opciones de la pregunta
@@ -132,7 +135,8 @@ class SurveyController extends Controller
                     Question::create([
                         'survey_id' => $survey->id,
                         'text' => $element['title'],
-                        'type' => 'date_of_birth'
+                        'type' => 'date_of_birth',
+                        'page' => $namepage
                     ]);
                 }
             }

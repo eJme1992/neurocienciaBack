@@ -42,7 +42,7 @@ class AnswerController extends Controller
      *                     property="survey",
      *                     type="string",
      *                 ),
-     *                 example={"time": "234", "page": "1"}
+     *                 example={"time": "234", "page": "page1"}
      *             )
      *         )
      *     ),
