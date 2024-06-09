@@ -92,5 +92,7 @@ php artisan test --filter testDatabaseConnection
 
 Estas instrucciones te ayudarán a configurar y ejecutar el proyecto Laravel correctamente.
 ``` 
-
-Este formato Markdown es compatible con Git y se verá correctamente renderizado en la plataforma.
+Se se hace alguna modificacion en en codigo para genera documentancion utilice 
+//  php artisan l5-swagger:generate 
+//  php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
+Luego de hacer los comentarios respectivo

@@ -7,6 +7,12 @@ use Illuminate\Support\Facades\Validator;
 use App\Helpers\JwtAuth;
 use App\Models\User;
 
+/**
+ * @OA\Info(
+ *     title="Mi API",
+ *     version="1.0.0"
+ * )
+ */
 
 
 class AuthController extends Controller
@@ -18,18 +24,58 @@ class AuthController extends Controller
         $this->jwtAuth = $jwtAuth;
     }
 
-    /* ###################### LOGIN ####################### */
-
+  
+    /**
+     * @OA\Post(
+     *     path="/login",
+     *     tags={"auth"},
+     *     summary="Log in a user",
+     *     description="This can only be done by the logged in user.",
+     *     operationId="loginUser",
+     *     @OA\RequestBody(
+     *         description="User log in",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="username",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password",
+     *                     type="string"
+     *                 ),
+     *                 example={"username": "user", "password": "password"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="token",
+     *                     type="string"
+     *                 ),
+     *                 example={"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid username/password supplied"
+     *     )
+     * )
+     */
     public function login(Request $request)
     {
-        $json = $request->input('json', null);
-        $params_array = json_decode($json, true);
+        $params_array = $request->except('token');
 
-        if (empty($params_array)) {
-            return $this->errorResponse(404, 'El usuario no se ha podido logear correctamente', 'El JSON no ha sido escrito correctamente');
-        }
-
-        $params_array = array_map('trim', $params_array);
+        if( empty($params_array) )
+            $params_array = $request->getContent();
 
         $validator = Validator::make($params_array, [
             'email'    => 'required',
@@ -57,18 +103,57 @@ class AuthController extends Controller
         return response()->json($data, $data['code']);
     }
 
-    /* ###################### REGISTRER ################### */
-
+    /**
+     * @OA\Post(
+     *     path="/register",
+     *     tags={"auth"},
+     *     summary="Register a new user",
+     *     description="This can only be done by the logged out user.",
+     *     operationId="registerUser",
+     *     @OA\RequestBody(
+     *         description="User registration",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="username",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password",
+     *                     type="string"
+     *                 ),
+     *                 example={"username": "user", "password": "password"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="message",
+     *                     type="string"
+     *                 ),
+     *                 example={"message": "User registered successfully"}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid input"
+     *     )
+     * )
+     */
     public function register(Request $request)
     {
-        $json = $request->input('json', null);
-        $params_array = json_decode($json, true);
+        $params_array = $request->except('token');
 
-        if (empty($params_array)) {
-            return $this->errorResponse(403, 'El usuario no ha sido creado', 'El JSON no ha sido escrito correctamente');
-        }
-
-        $params_array = array_map('trim', $params_array);
+        if( empty($params_array) )
+            $params_array = $request->getContent();
 
         $validator = Validator::make($params_array, [
             'email'      => 'required|email|unique:users',
@@ -84,7 +169,7 @@ class AuthController extends Controller
             'email'      => $params_array['email'],
             'password'   => $password,
         ]);
-        
+
         $user->save();
 
         $data = [
