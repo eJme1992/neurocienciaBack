@@ -32,22 +32,20 @@ class JwtAuth
             'email'    => $email,
             'password' => $password
         ])->first();
-
         // Verify credentials
         if (empty($user)) {
             return null;
         }
-
         $this->user = $user;
 
         // Generate token
         $token = [
                 'sub'   => $user->id,
                 'email' => $user->email,
+                'type'  => 'login',
                 'iat'   => time(),
                 'exp'   => time() + (7 * 24 * 60 * 60),
         ];
-
         return $this->tokenGenerator($token, 'login', $getToken);
     }
 
@@ -68,6 +66,7 @@ class JwtAuth
         $token = [
                 'sub'   => $user->id,
                 'email' => $user->email,
+                'type'  => 'Answer',
                 'iat'   => time(),
                 'exp'   => time() + (7 * 24 * 60 * 60),
         ];
@@ -87,7 +86,6 @@ class JwtAuth
     {
         $jwt = JWT::encode($token, $this->key, 'HS256');
         $decode = JWT::decode($jwt, new Key($this->key, 'HS256'));
-
         if (is_null($getToken)) {
             $data = [
                 'token'   => $jwt,
@@ -95,8 +93,16 @@ class JwtAuth
                 'type'   => $type,
             ];
         }
-        
         return $data ?? [];
+    }
+
+    public function checkTokenAdmin(string $jwt, bool $getIdentity = false)
+    {
+      $admin = $this->checkToken($jwt,true);
+      if($admin->type == 'login'){
+        return true;
+      }
+        return false;
     }
 
     /**
@@ -109,11 +115,10 @@ class JwtAuth
     public function checkToken(string $jwt, bool $getIdentity = false)
     {
         try {
-            $jwt = str_replace('"', '', $jwt);
-            $auth = false;
-            $algorithms = new stdClass();
-            $algorithms->algos = array('HS256');
+            $jwt = $this->cleanJwtToken($jwt);
+            $auth = false;      
             $decode = JWT::decode($jwt, new Key($this->key, 'HS256'));
+       
         } catch (\UnexpectedValueException $e) {
             $auth = false;
         } catch (\DomainException $e) {
@@ -140,8 +145,17 @@ class JwtAuth
      */
     public function jwtDecode(string $token)
     {
-        $algorithms = new stdClass();
-        $algorithms->algos = array('HS256');
         return JWT::decode($token, new Key($this->key, 'HS256'));
     }
+
+
+    private function cleanJwtToken(string $token): string{
+        if (strpos($token, 'Bearer ') === 0) {
+            $token = substr($token, 7);
+        }
+        $cleaned = trim($token);
+        $cleaned = preg_replace('/[^A-Za-z0-9\._\-]/', '', $cleaned);
+        return $cleaned;
+    }
+
 }

@@ -152,6 +152,68 @@
                     }
                 }
             }
+        },
+        "/importFromJson": {
+            "post": {
+                "tags": [
+                    "survey"
+                ],
+                "summary": "Import data from JSON",
+                "description": "This can only be done by the logged in user.",
+                "operationId": "importFromJson",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token for authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "JSON data to import",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "json": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "json": "your JSON data here"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Data imported successfully"
+                    },
+                    "400": {
+                        "description": "Invalid JSON data supplied"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
         }
     }
 }
