@@ -108,13 +108,18 @@ Para esto debera quitar las referencia a imagenes y convertir el json a string h
 
 Esta es una encuesta de prueba web diseñada para recopilar datos sobre diferentes aspectos.
 
+1 - registra un usuario Administro en la pesta;a Auth Metodo register 
+
+2-  Loguese con el usuario administror en la pesta;a auth metodo login utilizando los datos de metodo 1
+
+Al hacer login el metodo responde el token de autentificacion requerido para exportar los datos de la cuentas 
+
 ## Estructura de la Encuesta
 
 ```string
 {
   "json": "{\"title\":\"EncuentadepruebaparaNeurociencia\",\"description\":\"Encuestadepruebaweb\",\"logoPosition\":\"right\",\"pages\":[{\"name\":\"page1\",\"elements\":[{\"type\":\"text\",\"name\":\"question1\",\"title\":\"Mail\",\"isRequired\":true,\"inputType\":\"email\"}],\"title\":\"Email\"},{\"name\":\"page2\",\"elements\":[{\"type\":\"dropdown\",\"name\":\"question2\",\"title\":\"Indicatugénero\",\"isRequired\":true,\"choices\":[{\"value\":\"Item1\",\"text\":\"Hombre\"},{\"value\":\"Item2\",\"text\":\"Mujer\"},{\"value\":\"Item3\",\"text\":\"No-binario\"},{\"value\":\"Item4\",\"text\":\"Prefieronocontestar\"}]}],\"title\":\"Genero\"},{\"name\":\"page3\",\"elements\":[{\"type\":\"text\",\"name\":\"question3\",\"title\":\"Fechadenacimineto\",\"isRequired\":true,\"inputType\":\"datetime-local\"}],\"title\":\"Edad\"},{\"name\":\"page4\",\"elements\":[{\"type\":\"image\",\"name\":\"question5\",\"imageFit\":\"cover\",\"imageHeight\":\"auto\",\"imageWidth\":\"100%\"},{\"type\":\"imagepicker\",\"name\":\"question4\",\"title\":\"Queprefieres?\",\"isRequired\":true,\"choices\":[{\"value\":\"Image1\"},{\"value\":\"Image2\"}],\"imageFit\":\"cover\"}],\"title\":\"Preferencia\"}]}"
 }
-
 
 
 Recuerda que eliminar la comas que marcaban las imagenes para que el json sea valiso 
