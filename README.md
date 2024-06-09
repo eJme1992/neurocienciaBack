@@ -79,6 +79,10 @@ DB_PASSWORD=contraseña
 2. Ejecuta el siguiente comando para ejecutar el test unitario de conexión y asegurarte de que la configuración de la base de datos sea correcta:
 ```
 php artisan test --filter testDatabaseConnection
+
+luego ejecuta el comando
+
+php artisan key:generate
 ```
 3. Si el test es exitoso, significa que la configuración de la base de datos es correcta.
 
@@ -106,7 +110,6 @@ Para esto debera quitar las referencia a imagenes y convertir el json a string h
 
 # Encuesta de Prueba para Neurociencia
 
-Esta es una encuesta de prueba web diseñada para recopilar datos sobre diferentes aspectos.
 
 1 - registra un usuario Administro en la pesta;a Auth Metodo register 
 
