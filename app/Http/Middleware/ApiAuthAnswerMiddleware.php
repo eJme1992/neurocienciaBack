@@ -46,7 +46,7 @@ class ApiAuthAnswerMiddleware
             ];
             return response()->json($data, $data['code']);
         } 
-        $request->headers->set('user',$jwtAuth->checkToken($token,true));
+        $request->headers->set('client',json_encode($jwtAuth->checkToken($token,true)));
         return $next($request);
     }
 }

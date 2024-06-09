@@ -11,7 +11,7 @@ class Question extends Model
 
     protected $table = 'questions';
 
-    protected $fillable = ['survey_id', 'text', 'type'];
+    protected $fillable = ['survey_id', 'text', 'type','name','page'];
     
     public function survey()
     {

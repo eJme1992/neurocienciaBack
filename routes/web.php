@@ -18,6 +18,7 @@ Route::group(['middleware' => ApiAuthMiddleware::class], function () {
 
 // Registra tiempos por pagina 
 Route::group(['middleware' => ApiAuthAnswerMiddleware::class], function () {
-    Route::post('/TimeStore', [AnswerController::class, 'TimeStore']);
+    Route::post('/timeStore', [AnswerController::class, 'TimeStore']);
+    Route::post('/registerAnswer', [AnswerController::class, 'AnwersUpdate']);
 });
 

@@ -204,7 +204,7 @@ class AuthController extends Controller
      *                     type="string",
      *                     description="Nombre de la encuesta"
      *                 ),
-     *                 example={"email": "user@prueba.com", "survey": "Encuesta de prueba"}
+     *                 example={"email": "user@prueba.com", "survey": "EncuentadepruebaparaNeurociencia"}
      *             )
      *         )
      *     ),
@@ -248,6 +248,7 @@ class AuthController extends Controller
 
         $user = new UserAnswer([
             'email'      => $params_array['email'],
+            'name'       => $params_array['email'],
         ]);
 
         $user->save();

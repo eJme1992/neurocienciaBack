@@ -5,6 +5,138 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/timeStore": {
+            "post": {
+                "tags": [
+                    "Respuestas"
+                ],
+                "summary": "Almacena el tiempo por pagina de un cliente",
+                "description": "Almacena el tiempo por pagina de un cliente",
+                "operationId": "4742bd9e5db2f9efa0e08bd00aa4366f",
+                "parameters": [
+                    {
+                        "name": "Authorization_",
+                        "in": "header",
+                        "description": "Bearer token for authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Cliente login",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "page": {
+                                        "type": "string"
+                                    },
+                                    "survey": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "time": "234",
+                                    "page": "1"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operación exitosa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Hora almacenada correctamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error en la solicitud",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error al almacenar la hora"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/registerAnswer": {
+            "post": {
+                "tags": [
+                    "Respuestas"
+                ],
+                "summary": "Registro final de las respuestas",
+                "description": "Registra las respuestas de un cliente",
+                "operationId": "registerAnswer",
+                "parameters": [
+                    {
+                        "name": "Authorization_",
+                        "in": "header",
+                        "description": "Bearer token for authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "JSON data to import",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "json": {
+                                        "type": "string",
+                                        "example": "{\"question1\":\"edwin@gmail.com\",\"question2\":\"Item 1\",\"question3\":\"2024-06-21T15:39\",\"question4\":\"Image 2\"}"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Respuesta almacenada correctamente"
+                    },
+                    "400": {
+                        "description": "Invalid JSON data supplied"
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "tags": [
@@ -143,7 +275,7 @@
                                 "type": "object",
                                 "example": {
                                     "email": "user@prueba.com",
-                                    "survey": "Encuesta de prueba"
+                                    "survey": "EncuentadepruebaparaNeurociencia"
                                 }
                             }
                         }

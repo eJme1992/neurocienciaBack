@@ -67,10 +67,11 @@ class SurveyController extends Controller
         if ($validator->fails()) {
             return response()->json(['message' => 'Datos JSON inválidos'], 403);
         }
-
-        // Decodificar JSON
+      
         $surveyData = json_decode($params_array['json'], true);
-        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return response()->json(['message' => 'Datos JSON inválidos'.json_last_error_msg()], 403);
+        }
         $survey = Survey::where('title',$surveyData['title'])->first();
         if ($survey) {
             return response()->json(['message' => 'La encuesta ya existe'], 403);
@@ -91,6 +92,7 @@ class SurveyController extends Controller
                     $question = Question::create([
                         'survey_id' => $survey->id,
                         'text' => $element['title'],
+                        'name' => $element['name'],
                         'type' => 'single_option',
                         'page' => $namepage
                     ]);
@@ -114,6 +116,7 @@ class SurveyController extends Controller
                     $question = Question::create([
                         'survey_id' => $survey->id,
                         'text' => $element['title'],
+                        'name' => $element['name'],
                         'type' => 'multiple_option'
                     ]);
 
