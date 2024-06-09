@@ -102,7 +102,8 @@ class SurveyController extends Controller
                         Option::create([
                             'question_id' => $question->id,
                             'text' => $choice['text'],
-                            'page' => $namepage
+                            'page' => $namepage,
+                            'name' => $element['name'],
                         ]);
                     }
                 } elseif ($element['type'] === 'text' && $element['inputType'] === 'email') {
@@ -111,6 +112,7 @@ class SurveyController extends Controller
                         'survey_id' => $survey->id,
                         'text' => $element['title'],
                         'type' => 'text',
+                        'name' => $element['name'],
                         'page' => $namepage
                     ]);
                 } elseif ($element['type'] === 'imagepicker') {
@@ -136,6 +138,7 @@ class SurveyController extends Controller
                         'survey_id' => $survey->id,
                         'text' => $element['title'],
                         'type' => 'date_of_birth',
+                        'name' => $element['name'],
                         'page' => $namepage
                     ]);
                 }
