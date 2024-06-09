@@ -124,6 +124,8 @@ Al hacer login, el método responde con el token de autenticación requerido par
 
 ### Estructura de la Encuesta
 
+<h3>Utilizar este Json copiar y pegar en swagger</h3>
+
 ```json
 {
   "json": "{\"title\":\"EncuentadepruebaparaNeurociencia\",\"description\":\"Encuestadepruebaweb\",\"logoPosition\":\"right\",\"pages\":[{\"name\":\"page1\",\"elements\":[{\"type\":\"text\",\"name\":\"question1\",\"title\":\"Mail\",\"isRequired\":true,\"inputType\":\"email\"}],\"title\":\"Email\"},{\"name\":\"page2\",\"elements\":[{\"type\":\"dropdown\",\"name\":\"question2\",\"title\":\"Indicatugénero\",\"isRequired\":true,\"choices\":[{\"value\":\"Item1\",\"text\":\"Hombre\"},{\"value\":\"Item2\",\"text\":\"Mujer\"},{\"value\":\"Item3\",\"text\":\"No-binario\"},{\"value\":\"Item4\",\"text\":\"Prefieronocontestar\"}]}],\"title\":\"Genero\"},{\"name\":\"page3\",\"elements\":[{\"type\":\"text\",\"name\":\"question3\",\"title\":\"Fechadenacimineto\",\"isRequired\":true,\"inputType\":\"datetime-local\"}],\"title\":\"Edad\"},{\"name\":\"page4\",\"elements\":[{\"type\":\"image\",\"name\":\"question5\",\"imageFit\":\"cover\",\"imageHeight\":\"auto\",\"imageWidth\":\"100%\"},{\"type\":\"imagepicker\",\"name\":\"question4\",\"title\":\"Queprefieres?\",\"isRequired\":true,\"choices\":[{\"value\":\"Image1\"},{\"value\":\"Image2\"}],\"imageFit\":\"cover\"}],\"title\":\"Preferencia\"}]}"
