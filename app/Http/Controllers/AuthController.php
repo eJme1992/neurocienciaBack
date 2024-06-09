@@ -9,7 +9,7 @@ use App\Models\User;
 
 /**
  * @OA\Info(
- *     title="Mi API",
+ *     title="My Api documentation Att Edwin Mogollon",
  *     version="1.0.0"
  * )
  */
@@ -39,14 +39,14 @@ class AuthController extends Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 @OA\Property(
-     *                     property="username",
+     *                     property="email",
      *                     type="string"
      *                 ),
      *                 @OA\Property(
      *                     property="password",
      *                     type="string"
      *                 ),
-     *                 example={"username": "user", "password": "password"}
+     *                 example={"email": "ser@prueba.com", "password": "password"}
      *             )
      *         )
      *     ),
@@ -66,7 +66,7 @@ class AuthController extends Controller
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Invalid username/password supplied"
+     *         description="Invalid email/password supplied"
      *     )
      * )
      */
@@ -117,14 +117,14 @@ class AuthController extends Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 @OA\Property(
-     *                     property="username",
+     *                     property="email",
      *                     type="string"
      *                 ),
      *                 @OA\Property(
      *                     property="password",
      *                     type="string"
      *                 ),
-     *                 example={"username": "user", "password": "password"}
+     *                 example={"email": "user@prueba.com", "password": "password"}
      *             )
      *         )
      *     ),

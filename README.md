@@ -92,6 +92,16 @@ php artisan test --filter testDatabaseConnection
 
 Estas instrucciones te ayudarán a configurar y ejecutar el proyecto Laravel correctamente.
 ``` 
+<h2> Ejecucion y documentacion </h2>
+Para entra en la domentacion del proyecton debe ejecutar los siguientes comando desde la Raiz
+
+php artisan serve // Para ejecutar el proyecto
+
+
+
+
+
+
 Se se hace alguna modificacion en en codigo para genera documentancion utilice 
 //  php artisan l5-swagger:generate 
 //  php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
