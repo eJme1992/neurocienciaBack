@@ -91,6 +91,8 @@ php artisan test --filter testDatabaseConnection
   Duration: 0.15s</code>
 
 Estas instrucciones te ayudarán a configurar y ejecutar el proyecto Laravel correctamente.
+
+Si la base de datos esta funcional ejecuta desde la raiz el comando php artisan migrate que creara la estructura
 ``` 
 <h2> Ejecucion y documentacion </h2>
 Para entra en la domentacion del proyecton debe ejecutar los siguientes comando desde la Raiz
