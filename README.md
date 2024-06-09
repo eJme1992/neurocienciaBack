@@ -1,16 +1,16 @@
-<h1>Prueba tecnica Edwin Jose Backend</h1>
+# Prueba Técnica Edwin José Backend
 
-```markdown
-# Instrucciones para ejecutar el proyecto Laravel
+## Instrucciones para ejecutar el proyecto Laravel
 
-## Requisitos previos
+### Requisitos previos
 - PHP 7.1 o superior instalado en tu equipo.
 - Un servidor web Apache y MySQL (o similar como MariaDB).
 - [Composer](https://getcomposer.org/) instalado en tu equipo.
 
-## Extensiones de PHP requeridas
+### Extensiones de PHP requeridas
 Asegúrate de tener las siguientes extensiones de PHP habilitadas en tu archivo `php.ini`:
-```
+
+```ini
 extension=bcmath.so
 extension=bz2.so
 extension=calendar.so
@@ -58,11 +58,12 @@ extension=xsl.so
 extension=zip.so
 ```
 
-## Configuración de la base de datos
+### Configuración de la base de datos
 1. En tu gestor de MySQL, crea una base de datos vacía.
 2. Copia el archivo `.env.example` y renómbralo como `.env` en la raíz de tu proyecto Laravel.
 3. Configura las siguientes variables en tu archivo `.env` con los detalles de tu base de datos:
-```
+
+```env
 DB_HOST=nombre_del_host
 DB_PORT=puerto
 DB_DATABASE=nombre_de_la_base_de_datos
@@ -70,60 +71,63 @@ DB_USERNAME=nombre_de_usuario
 DB_PASSWORD=contraseña
 ```
 
-## Instalación de dependencias
+### Instalación de dependencias
 1. Abre una terminal en la carpeta raíz de tu proyecto Laravel.
 2. Ejecuta el comando `composer install` para instalar todas las dependencias del proyecto.
 
-## Prueba de conexión a la base de datos
+### Prueba de conexión a la base de datos
 1. Abre una terminal en la carpeta raíz de tu proyecto Laravel.
 2. Ejecuta el siguiente comando para ejecutar el test unitario de conexión y asegurarte de que la configuración de la base de datos sea correcta:
-```
+
+```bash
 php artisan test --filter testDatabaseConnection
+```
 
-luego ejecuta el comando
+Luego, ejecuta el comando:
 
+```bash
 php artisan key:generate
 ```
+
 3. Si el test es exitoso, significa que la configuración de la base de datos es correcta.
 
-<code>string(3) "ddd"
-
+```plaintext
    PASS  Tests\Unit\ConnectionTest
   ✓ database connection                                                                                                                    0.11s  
 
   Tests:    1 passed (2 assertions)
-  Duration: 0.15s</code>
+  Duration: 0.15s
+```
 
-Estas instrucciones te ayudarán a configurar y ejecutar el proyecto Laravel correctamente.
+Estas instrucciones te ayudarán a configurar y ejecutar el proyecto Laravel correctamente. Si la base de datos está funcional, ejecuta desde la raíz el comando:
 
-Si la base de datos esta funcional ejecuta desde la raiz el comando php artisan migrate que creara la estructura
-``` 
-<h2> Ejecucion y documentacion </h2>
-Para entra en la domentacion del proyecton debe ejecutar los siguientes comando desde la Raiz
+```bash
+php artisan migrate
+```
 
-php artisan serve // Para ejecutar el proyecto
+## Ejecución y documentación
 
+Para acceder a la documentación del proyecto, debes ejecutar los siguientes comandos desde la raíz:
 
-El sistema tiene la posibilidad de importar los datos de Json a la base de datos con el metodo 
+```bash
+php artisan serve
+```
 
-Para esto debera quitar las referencia a imagenes y convertir el json a string https://jsontostring.com/ Ejmeplo 
+El sistema tiene la posibilidad de importar los datos de JSON a la base de datos con el método correspondiente. Para esto, deberás quitar las referencias a imágenes y convertir el JSON a string usando [JsonToString](https://jsontostring.com/).
 
-# Encuesta de Prueba para Neurociencia
+### Encuesta de Prueba para Neurociencia
 
+1. Registra un usuario Administrador en la pestaña Auth con el método register.
+2. Inicia sesión con el usuario administrador en la pestaña Auth usando el método login con los datos del método 1.
 
-1 - registra un usuario Administro en la pesta;a Auth Metodo register 
+Al hacer login, el método responde con el token de autenticación requerido para exportar los datos de las cuentas.
 
-2-  Loguese con el usuario administror en la pesta;a auth metodo login utilizando los datos de metodo 1
+### Estructura de la Encuesta
 
-Al hacer login el metodo responde el token de autentificacion requerido para exportar los datos de la cuentas 
-
-## Estructura de la Encuesta
-
-```string
+```json
 {
   "json": "{\"title\":\"EncuentadepruebaparaNeurociencia\",\"description\":\"Encuestadepruebaweb\",\"logoPosition\":\"right\",\"pages\":[{\"name\":\"page1\",\"elements\":[{\"type\":\"text\",\"name\":\"question1\",\"title\":\"Mail\",\"isRequired\":true,\"inputType\":\"email\"}],\"title\":\"Email\"},{\"name\":\"page2\",\"elements\":[{\"type\":\"dropdown\",\"name\":\"question2\",\"title\":\"Indicatugénero\",\"isRequired\":true,\"choices\":[{\"value\":\"Item1\",\"text\":\"Hombre\"},{\"value\":\"Item2\",\"text\":\"Mujer\"},{\"value\":\"Item3\",\"text\":\"No-binario\"},{\"value\":\"Item4\",\"text\":\"Prefieronocontestar\"}]}],\"title\":\"Genero\"},{\"name\":\"page3\",\"elements\":[{\"type\":\"text\",\"name\":\"question3\",\"title\":\"Fechadenacimineto\",\"isRequired\":true,\"inputType\":\"datetime-local\"}],\"title\":\"Edad\"},{\"name\":\"page4\",\"elements\":[{\"type\":\"image\",\"name\":\"question5\",\"imageFit\":\"cover\",\"imageHeight\":\"auto\",\"imageWidth\":\"100%\"},{\"type\":\"imagepicker\",\"name\":\"question4\",\"title\":\"Queprefieres?\",\"isRequired\":true,\"choices\":[{\"value\":\"Image1\"},{\"value\":\"Image2\"}],\"imageFit\":\"cover\"}],\"title\":\"Preferencia\"}]}"
 }
+```
 
-
-Recuerda que eliminar la comas que marcaban las imagenes para que el json sea valiso 
-
+Recuerda eliminar las comas que marcaban las imágenes para que el JSON sea válido.
