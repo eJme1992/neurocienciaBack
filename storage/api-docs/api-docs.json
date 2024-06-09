@@ -12,7 +12,7 @@
                 ],
                 "summary": "Almacena el tiempo por pagina de un cliente",
                 "description": "Almacena el tiempo por pagina de un cliente",
-                "operationId": "4742bd9e5db2f9efa0e08bd00aa4366f",
+                "operationId": "51c498fb18e6288d85a1d062ebf464ab",
                 "parameters": [
                     {
                         "name": "Authorization_",
@@ -34,7 +34,7 @@
                                     "page": {
                                         "type": "string"
                                     },
-                                    "survey": {
+                                    "time": {
                                         "type": "string"
                                     }
                                 },
@@ -254,11 +254,11 @@
                 "tags": [
                     "auth"
                 ],
-                "summary": "Legea o registra un usuario",
-                "description": "Atravez de la primera respuesta la cual es el correo electronico se logea o registra un usuario devuelve el token de seguridad para el resto de la encuesta",
-                "operationId": "160f38f17729a45d91fc236aa139fa70",
+                "summary": "Log in or register a user",
+                "description": "Logs in or registers a user based on the provided email, and returns a token for the rest of the survey.",
+                "operationId": "1c26f87f0f076fe86bba678403154289",
                 "requestBody": {
-                    "description": "Cliente login",
+                    "description": "Client login",
                     "required": true,
                     "content": {
                         "application/json": {

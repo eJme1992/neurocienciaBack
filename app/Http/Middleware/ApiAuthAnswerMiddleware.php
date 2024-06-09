@@ -46,7 +46,16 @@ class ApiAuthAnswerMiddleware
             ];
             return response()->json($data, $data['code']);
         } 
-        $request->headers->set('client',json_encode($jwtAuth->checkToken($token,true)));
+        $dataHeader = $jwtAuth->checkToken($token,true);
+        if ($dataHeader->type != 'Answer'){
+            $data = [
+                'status' => 'error',
+                'code'   =>  403,
+                'msj'    => 'El Usuario no está identificado',
+            ];
+            return response()->json($data, $data['code']);
+        }
+        $request->headers->set('client',json_encode($dataHeader));
         return $next($request);
     }
 }

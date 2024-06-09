@@ -124,7 +124,7 @@ class AnswerController extends Controller
      *                 @OA\Property(
      *                     property="json",
      *                     type="string",
-     *                     example="{\"question1\":\"edwin@gmail.com\",\"question2\":\"Item 1\",\"question3\":\"2024-06-21T15:39\",\"question4\":\"Image 2\"}"
+     *                     example="{""question1"":""edwin@gmail.com"",""question2"":""Item 1"",""question3"":""2024-06-21T15:39"",""question4"":""Image 2""}"
      *                 )
      *             )
      *         )
