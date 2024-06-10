@@ -225,6 +225,8 @@ class AuthController extends Controller
     public function registerAnswer(Request $request)
     {
         try {
+
+         
             $params_array = $request->all();
 
             $validator = Validator::make($params_array, [

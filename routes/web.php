@@ -9,7 +9,7 @@ use App\Http\Controllers\AnswerController;
 
 Route::post('/login',    [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/begin', [AuthController::class, 'registerAnsawer']);
+Route::post('/begin', [AuthController::class, 'registerAnswer']);
 
 // Rutas de administrador 
 Route::group(['middleware' => ApiAuthMiddleware::class], function () {
