@@ -65,14 +65,14 @@ class AnswerController extends Controller
             $params_array = $request->all();
 
             $validator = Validator::make($params_array, [
-                'page' => 'required'
+                'pages' => 'required'
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['message' => 'Datos JSON inválidos'], 403);
             }
 
-            $data = json_decode($params_array['json'], true);
+            $data = json_decode($params_array['pages'], true);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 return response()->json(['message' => 'Datos JSON inválidos: ' . json_last_error_msg()], 403);
             }

@@ -1,4 +1,7 @@
 <?php
+header("Access-Control-Allow-Origin: http://backend.ejme.us/");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE, PUT");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
