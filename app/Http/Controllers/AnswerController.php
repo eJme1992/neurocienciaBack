@@ -88,7 +88,7 @@ class AnswerController extends Controller
             foreach ($data as $item) {
                 $answer = new Answer;   
                 $survey = Question::where('page', $item['name'])->first();
-                $answer->value      =  $item['value'];
+                $answer->answer      =  $item['value'];
                 $answer->time_spent =  $item['time']['minutes'] . ":" . $item['time']['seconds'] . ":" . $item['time']['milliseconds'];
                 $answer->save();
             }
