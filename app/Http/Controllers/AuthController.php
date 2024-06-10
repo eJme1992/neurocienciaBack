@@ -22,13 +22,14 @@ class AuthController extends Controller
 
     public function __construct(JwtAuth $jwtAuth)
     {
+        // Allow CORS Se le agrega esto para o bligarlos a correr todo en un servidor o forzarles un url
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE, PUT");
         header("Access-Control-Allow-Headers: Content-Type, Authorization");
         $this->jwtAuth = $jwtAuth;
     }
 
-    /**
+    /**s
      * @OA\Post(
      *     path="/login",
      *     tags={"auth"},
