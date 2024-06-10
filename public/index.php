@@ -1,5 +1,10 @@
 <?php
 
+ // Allow CORS Se le agrega esto para o bligarlos a correr todo en un servidor o forzarles un url
+ header("Access-Control-Allow-Origin: *");
+ header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE, PUT");
+ header("Access-Control-Allow-Headers: Content-Type, Authorization");
+ 
 use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));

@@ -49,7 +49,7 @@ return new class extends Migration
             $table->foreignId('question_id')->constrained('questions')->onDelete('cascade');
             $table->foreignId('option_id')->nullable()->constrained('options')->onDelete('cascade');
             $table->text('answer')->nullable();
-            $table->integer('time_spent')->nullable();
+            $table->string('time_spent')->nullable();
             $table->timestamp('answer_date')->useCurrent();
             $table->timestamps();
         });
