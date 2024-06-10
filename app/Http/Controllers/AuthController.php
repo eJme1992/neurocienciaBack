@@ -29,7 +29,7 @@ class AuthController extends Controller
         $this->jwtAuth = $jwtAuth;
     }
 
-    /**s
+    /**
      * @OA\Post(
      *     path="/login",
      *     tags={"auth"},

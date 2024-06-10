@@ -80,7 +80,8 @@ class SurveyController extends Controller
             // Crear la encuesta
             $survey = Survey::create([
                 'title' => $surveyData['title'],
-                'description' => $surveyData['description']
+                'description' => $surveyData['description'],
+                'json' => json_encode($surveyData)
             ]);
 
             // Procesar cada página del JSON
@@ -145,9 +146,11 @@ class SurveyController extends Controller
                 }
             }
 
+
+
             return response()->json(['message' => 'Encuesta importada exitosamente']);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error en el formato de Json'], 403);
+            return response()->json(['message' => $e->getMessage() . $e->getLine()], 403);
         }
     }
 }

@@ -11,7 +11,7 @@ class Survey extends Model
 
     protected $table = 'surveys';
 
-    protected $fillable = ['title', 'description'];
+    protected $fillable = ['title', 'description', 'json'];
     
     public function questions()
     {
