@@ -5,92 +5,6 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/timeStore": {
-            "post": {
-                "tags": [
-                    "Respuestas"
-                ],
-                "summary": "Almacena el tiempo por pagina de un cliente",
-                "description": "Almacena el tiempo por pagina de un cliente",
-                "operationId": "51c498fb18e6288d85a1d062ebf464ab",
-                "parameters": [
-                    {
-                        "name": "Authorization_",
-                        "in": "header",
-                        "description": "Bearer token for authorization",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "description": "Cliente login",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "page": {
-                                        "type": "string"
-                                    },
-                                    "time": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "time": "234",
-                                    "page": "page1"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Operación exitosa",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Hora almacenada correctamente"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error en la solicitud",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "error"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Error al almacenar la hora"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/registerAnswer": {
             "post": {
                 "tags": [
@@ -119,7 +33,7 @@
                                 "properties": {
                                     "json": {
                                         "type": "string",
-                                        "example": "{\"question1\":\"edwin@gmail.com\",\"question2\":\"Item 1\",\"question3\":\"2024-06-21T15:39\",\"question4\":\"Image 2\"}"
+                                        "example": "{\"name\":\"page1\",\"title\":\"Email\",\"time\":{\"minutes\":\"00\",\"seconds\":\"04\",\"milliseconds\":\"580\"},\"value\":\"ss@mail.com\"},{\"name\":\"page2\",\"title\":\"Genero\",\"time\":{\"minutes\":\"00\",\"seconds\":\"03\",\"milliseconds\":\"050\"},\"value\":\"Item2\"},{\"name\":\"page3\",\"title\":\"Edad\",\"time\":{\"minutes\":\"00\",\"seconds\":\"06\",\"milliseconds\":\"630\"},\"value\":\"2024-06-09T22:05\"},{\"name\":\"page4\",\"title\":\"Preferencia\",\"time\":{\"minutes\":\"00\",\"seconds\":\"02\",\"milliseconds\":\"220\"},\"value\":\"Image1\"}"
                                     }
                                 },
                                 "type": "object"
@@ -133,62 +47,6 @@
                     },
                     "400": {
                         "description": "Invalid JSON data supplied"
-                    }
-                }
-            }
-        },
-        "/login": {
-            "post": {
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Log in a user",
-                "description": "Loguea un usuario admin.",
-                "operationId": "loginUser",
-                "requestBody": {
-                    "description": "User log in",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "email": {
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "email": "user@prueba.com",
-                                    "password": "password"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "token": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object",
-                                    "example": {
-                                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid email/password supplied"
                     }
                 }
             }
