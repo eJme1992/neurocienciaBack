@@ -18,6 +18,6 @@ Route::group(['middleware' => ApiAuthMiddleware::class], function () {
 
 // Registra tiempos por pagina 
 Route::group(['middleware' => ApiAuthAnswerMiddleware::class], function () {
-    Route::post('/registerAnswer', [AnswerController::class, 'AnwersUpdate']);
+    Route::post('/registerAnswer', [AnswerController::class, 'answersUpdate']);
 });
 
